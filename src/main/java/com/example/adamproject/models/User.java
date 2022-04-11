@@ -4,6 +4,7 @@ package com.example.adamproject.models;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @DynamicUpdate
@@ -23,6 +24,19 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column
+    private boolean enabled;
+
+    // Relationships
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")}
+    )
+    private List<Role> roles;
+
+
     // Basic Empty and Minimum-Field Constructors
     public User() {}
 
@@ -32,6 +46,24 @@ public class User {
         this.password = password;
         this.email = email;
     }
+
+    public User(long id, String username, String password, String email, boolean enabled) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.enabled = enabled;
+    }
+    // Copy Constructor
+    public User(User copy){
+        id = copy.id;
+        username = copy.username;
+        password = copy.password;
+        email = copy.email;
+        enabled = copy.enabled;
+    }
+
+
     // Basic Field Getters and Setters
     public long getId() {return id;}
     public void setId(long id) {this.id = id;}
@@ -41,4 +73,10 @@ public class User {
     public void setPassword(String password) {this.password = password;}
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email;}
+    public boolean isEnabled() {return enabled;}
+    public void setEnabled(boolean enabled) {this.enabled = enabled;}
+
+    // Relationship Getters and Setters
+    public List<Role> getRoles() {return roles;}
+    public void setRoles(List<Role> roles) {this.roles = roles;}
 }
